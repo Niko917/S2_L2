@@ -1,27 +1,36 @@
 #include "Sequence.h"
 #include <algorithm>
 #include <cstddef>
+#include <iterator>
 #include "array.h"
 #include "exceptions.h"
 
 template <typename T>
 
 class Array_sequence : public Sequence<T> {
-private:
+protected:
     Dynamic_Array<T>* array;
 
+    virtual Sequence<T> AppendInternal(T item) = 0;
+
 public:
-    Array_sequence() : array(Dynamic_Array<T>(0)) {}
-    Array_sequence(T* items, int count) : array(Dynamic_Array<T>(items, count)) {}
+    Array_sequence() : array(new Dynamic_Array<T>()) {}
+    Array_sequence(T* items, int count) : array(Dynamic_Array<T>(count)) {
+        for (int i = 0; i < count; ++i) {
+            array->Set(i, items[i]);
+        }
+    }
+    virtual ~Array_sequence() {delete array;}
 
 //////////////////////////////////////////////////////////////////////////////////
     ///METHODS
+    
     T Get_first() const override {
         return array->Get_first();
     }
 
     T Get_last() const override {
-        return array->Get_last();
+        return array->Get(array->Get_size() - 1);
     }
 
     T Get(int index) const override {
@@ -32,69 +41,153 @@ public:
         return array->Get_size();
     }
 
-    Sequence<T>* Get_subsequence(int start_index, int end_index) const override {
-        Dynamic_Array<T>* subarray = array.Get_subsequence(start_index, end_index);
-        return new Array_sequence<T>(*subarray);
-    }
+    virtual Sequence<T>* Get_subsequence(int start_index, int end_index) const = 0;
 
-    ///////////////////////////////////////////////////////////////////////////////
-    ///OPERATORS OVERLOADING
 
     T& operator[](const int index) const override {
-        return array[index];
+        return (*array)[index];
     }
 
+    virtual Sequence<T>* Append(T item) = 0;
+
+    virtual Sequence<T>* Prepend(T item) = 0;
+
+    virtual Sequence<T>* Insert_At(T item, int index) = 0;
+
+    virtual Sequence<T>* Concat(const Sequence<T>& other_arr) = 0;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+class Mutable_Array_Sequence : public Array_sequence<T> {
+public:
+
+    Mutable_Array_Sequence() : Array_sequence<T>() {}
+    Mutable_Array_Sequence(T* items, int count) : 
+    Array_sequence<T>(items, count) {}
+
     Sequence<T>* Append(T item) override {
-        array->Resize(array->Get_size() + 1);
-        array->Set(array->Get_size() - 1, item);
+        this->array->Resize(this->array->Get_size() + 1);
+        this->array->Set(this->array->Get_size() - 1, item);
         return this;
     }
 
     Sequence<T>* Prepand(T item) override {
-        Dynamic_Array<T> New_Arr(array->Get_size() + 1);
-        array->Set(0, item);
+        this->array-Resize(this->array->Get_size() + 1);
 
-        for (int i = 0; i < New_Arr.Get_size(); ++i) {
-            New_Arr.Set(i + 1, array.Get(i));
+        for (size_t i = this->array->Get_size() - 1; i > 0; --i) {
+            this->array->Set(i, this->array->Get(i - 1));
         }
-        array = New_Arr;
+
+        this->array->Set(0, item);
         return this;
     }
 
-    Sequence<T>* Insert_At(T item, int index) override {
-        if (index < 0 || index > array.Get_size()) {
-            throw Index_Out_of_range;
-        }
+    Sequence<T>* InsertAt(T item, int index) override {
+        if (index < 0 || index > this->array->Get_size()) throw Index_Out_of_range;
 
-        Dynamic_Array<T> newArray(array.Get_size() + 1);
-        for (int i = 0; i < index; ++i) {
-            // setting items until index
-            newArray.Set(i, array.Get(i));
-        }
-
-        newArray.Set(index, item);
+        this->array->Resize(this->array->Get_size() + 1);
         
-        // setting items after index 
-        for (int i = index; i < array.Get_size(); ++i) {
-            newArray.Set(i + 1, array.Get(i));
+        for (size_t i = this->array->Get_size() - 1; i > index; --i) {
+            this->array->Set(i, this->array->Get(i - 1));
         }
         
-        array = newArray;
+        this->array->Set(index, item);
         return this;
     }
 
-    Sequence<T>* Concat(const Sequence<T>& other_arr) override {
-        size_t new_size = array->Get_size() + other_arr.Get_lenght();
-        Dynamic_Array<T> new_Arr(new_size);
 
-        for (size_t i = 0; i < array->Get_size(); ++i){
-            new_Arr.Set(i, array.Get(i));
+    Sequence<T>* Concat(Sequence<T>* list) override {
+        size_t newSize = this->array->Get_size() + list->GetLength();
+        this->array->Resize(newSize);
+        
+        for (int i = 0; i < list->GetLength(); ++i) {
+            this->array->Set(this->array->Get_size() - list->GetLength() + i, list->Get(i));
         }
 
-        for (size_t j = 0; j < other_arr.Get_lenght(); ++j) {
-            new_Arr.Set(j + array->Get_size(), other_arr.Get(j));
-        }
-        array = new_Arr;
         return this;
     }
+   
+    Sequence<T>* Get_subsequence(int start_index, int end_index) const override {
+        if (start_index < 0 || end_index < 0 || start_index > end_index || end_index >= this->array->Get_size()) {
+            throw Invalid_sequence_type;
+        }
+
+        Mutable_Array_Sequence<T>* subsequence = new Mutable_Array_Sequence<T> ();
+
+        for (int i = start_index; i <= end_index; ++i) {
+            subsequence = Append(this->array->Get(i));
+        }
+        return subsequence;
+    }
+
+    virtual ~Mutable_Array_Sequence() {} 
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+class Immutable_Array_Sequence : public Array_sequence<T> { 
+public:
+    Immutable_Array_Sequence() : Array_sequence<T>() {}
+    Immutable_Array_Sequence(const Immutable_Array_Sequence<T>& sequence) : Array_sequence<T>(sequence) {}
+
+    Sequence<T>* Append(T item) override {
+        Dynamic_Array<T>* newArray = new Dynamic_Array<T>(this->array->Get_size() + 1);
+        for (size_t i = 0; i < this->array->Get_size(); ++i) {
+            newArray->Set(i, this->array->Get(i));
+        }
+        newArray->Set(this->array->Get_size(), item);
+        Immutable_Array_Sequence<T>* newSequence = new Immutable_Array_Sequence<T>();
+        delete newSequence->array;
+        newSequence->array = newArray;
+        return newSequence;
+    }
+
+    Sequence<T>* Prepend(T item) override {
+        Dynamic_Array<T>* newArray = new Dynamic_Array<T>(this->array->Get_size() + 1);
+        newArray->Set(0, item);
+        for (size_t i = 0; i < this->array->Get_size(); ++i) {
+            newArray->Set(i + 1, this->array->Get(i));
+        }
+        Immutable_Array_Sequence<T>* newSequence = new Immutable_Array_Sequence<T>();
+        delete newSequence->array;
+        newSequence->array = newArray;
+        return newSequence;
+    }
+
+    Sequence<T>* InsertAt(T item, int index) override {
+        if (index < 0 || index > this->array->Get_size()) throw std::out_of_range("Index out of range");
+        Dynamic_Array<T>* newArray = new Dynamic_Array<T>(this->array->Get_size() + 1);
+        for (size_t i = 0; i < index; ++i) {
+            newArray->Set(i, this->array->Get(i));
+        }
+        newArray->Set(index, item);
+        for (size_t i = index; i < this->array->Get_size(); ++i) {
+            newArray->Set(i + 1, this->array->Get(i));
+        }
+        Immutable_Array_Sequence<T>* newSequence = new Immutable_Array_Sequence<T>();
+        delete newSequence->array;
+        newSequence->array = newArray;
+        return newSequence;
+    }
+
+    Sequence<T>* Concat(Sequence<T>* list) override {
+        size_t newSize = this->array->Get_size() + list->GetLength();
+        Dynamic_Array<T>* newArray = new Dynamic_Array<T>(newSize);
+        for (size_t i = 0; i < this->array->Get_size(); ++i) {
+            newArray->Set(i, this->array->Get(i));
+        }
+        for (int i = 0; i < list->GetLength(); ++i) {
+            newArray->Set(this->array->Get_size() + i, list->Get(i));
+        }
+        Immutable_Array_Sequence<T>* newSequence = new Immutable_Array_Sequence<T>();
+        delete newSequence->array;
+        newSequence->array = newArray;
+        return newSequence;
+    }
+
+    virtual ~Immutable_Array_Sequence() {}
+};
+

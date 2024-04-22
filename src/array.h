@@ -17,11 +17,11 @@ public:
     }
 
     Dynamic_Array(const Dynamic_Array<T>& Array) {
-        size_t size = Array.size();
+        size_t size = Array.Get_size();
         items = new T[size];
 
         for (size_t i = 0; i < size; ++i) {
-            items[i] = Array[i]; 
+            items[i] = Array->Get(i); 
         }
         this->size = size;
     }

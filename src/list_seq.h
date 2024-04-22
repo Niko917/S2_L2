@@ -7,11 +7,12 @@ template <typename T>
 class List_Sequence : public Sequence<T> {
 
 private:
-    Doubly_Circular_Linked_list<T> Linked_list;
+    Doubly_Circular_Linked_list<T>* Linked_list;
 public:
     
-    List_Sequence() : Linked_list(Doubly_Circular_Linked_list<T>()) {}
-    List_Sequence(T* items, int count) : Linked_list(Doubly_Circular_Linked_list<T>(items, count)) {}
+    List_Sequence() : Linked_list(new Doubly_Circular_Linked_list<T>()) {}
+    List_Sequence(T* items, int count) : Linked_list(new Doubly_Circular_Linked_list<T>(items, count)) {}
+    ~List_Sequence() {delete Linked_list;}
 
     T Get_first() const override {
         return Linked_list->Get_first();
@@ -30,9 +31,15 @@ public:
     }
 
     Sequence<T>* Get_subsequence(int start_index, int end_index) const override {
-        Doubly_Circular_Linked_list<T> sublist = this->Linked_list.Get_sublist(start_index, end_index);
-        List_Sequence<T>* sequence = new List_Sequence<T>(*sublist);
+        Doubly_Circular_Linked_list<T> sublist = this->Linked_list->Get_sublist(start_index, end_index);
+        List_Sequence<T>* sequence = new List_Sequence<T>;
+        Node<T>* current = sublist->head;
 
+        for (int i = start_index; i <= end_index; ++i) {
+            sequence->Append(current->item);
+            current = current->next;
+        }
+        delete sublist;
         return sequence;
     }
 
@@ -52,7 +59,7 @@ public:
     }
 
     Sequence<T>* Concat(Sequence<T>& list) override {
-        for (int i = 0; i < list.Get_lenght(); ++i) {
+        for (int i = 0; i < list.Get_length(); ++i) {
             Linked_list.Append(list.Get(i));
         }
         return this;

@@ -68,7 +68,7 @@ template <typename T>
 void Doubly_Circular_Linked_list<T>::Append(T item) {
     Node<T>* new_node = new Node<T>(item);
     if (size == 0) {
-        new_node = head = tail;
+        head == tail == new_node;
         head->prev = head->next = new_node;
     }
     else {

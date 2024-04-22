@@ -17,6 +17,7 @@ T Dynamic_Array<T>::Get(int index) {
 
 template <typename T>
 int Dynamic_Array<T>::Get_size() const {
+    if (this->Get_size() == 0) throw Sequence_is_empty;
     return size;
 }
 
@@ -46,7 +47,7 @@ T* Dynamic_Array<T>::Resize(size_t New_size) {
         items = New_arr;
         size = New_size;
 
-        return New_arr;
+        return this;
     }
 }
 

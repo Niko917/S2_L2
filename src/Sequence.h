@@ -12,7 +12,7 @@ class Sequence {
         
         virtual T Get(int index) const = 0;
 
-        virtual int Get_lenght() const = 0;
+        virtual int Get_length() const = 0;
 
         virtual Sequence<T>* Get_subsequence(int start_index, int end_index) const = 0;
         
@@ -28,8 +28,6 @@ class Sequence {
 
         virtual Sequence<T>* Concat(Sequence<T>* list) const = 0;
 
-        virtual ~Sequence<T> () {}
-        
-        virtual T& operator[](const int index) const = 0;
+        virtual ~Sequence() {}
         
 };
