@@ -1,10 +1,12 @@
 #include <stdlib.h>
 
+
 template <typename T>
 
 class Sequence {
     public:
-        virtual T Get_first() const = 0; // clear virtual function
+        
+        virtual T Get_first() const = 0; // pure virtual function
         
         virtual T Get_last() const = 0;
         
@@ -13,7 +15,8 @@ class Sequence {
         virtual int Get_lenght() const = 0;
 
         virtual Sequence<T>* Get_subsequence(int start_index, int end_index) const = 0;
-
+        
+        virtual T& operator [] (const int index) const = 0;
         //////////////////////////////////////////////////////////////////////////////
         // OPERATIONS
         
@@ -26,4 +29,7 @@ class Sequence {
         virtual Sequence<T>* Concat(Sequence<T>* list) const = 0;
 
         virtual ~Sequence<T> () {}
+        
+        virtual T& operator[](const int index) const = 0;
+        
 };
