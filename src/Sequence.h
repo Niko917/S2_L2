@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdlib.h>
 
 
@@ -20,14 +22,17 @@ class Sequence {
         //////////////////////////////////////////////////////////////////////////////
         // OPERATIONS
         
-        virtual Sequence<T>* Append (T item) const = 0;
+        virtual Sequence<T>* Append (T item) = 0;
 
-        virtual Sequence<T>* Prepand(T item) const = 0;
+        virtual Sequence<T>* Prepend(T item) = 0;
 
-        virtual Sequence<T>* Insert_At(T item, int index) const = 0;
+        virtual Sequence<T>* Insert_At(T item, int index) = 0;
 
-        virtual Sequence<T>* Concat(Sequence<T>* list) const = 0;
+        virtual Sequence<T>* Concat(Sequence<T>& other_seq) = 0;
 
         virtual ~Sequence() {}
         
 };
+
+
+

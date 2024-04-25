@@ -1,3 +1,5 @@
+#pragma once
+
 #include "list.h"
 #include "Sequence.h"
 #include "exceptions.h"
@@ -13,24 +15,27 @@ public:
     List_Sequence() : Linked_list(new Doubly_Circular_Linked_list<T>()) {}
     List_Sequence(T* items, int count) : Linked_list(new Doubly_Circular_Linked_list<T>(items, count)) {}
     ~List_Sequence() {delete Linked_list;}
+    
+    List_Sequence<T>* Instance() = 0;
 
-    T Get_first() const override {
+
+    T Get_first() override {
         return Linked_list->Get_first();
     }
     
-    T Get_last() const override {
+    T Get_last() override {
         return Linked_list->Get_last();
     }
 
-    T Get(int index) const override {
+    T Get(int index) override {
         return Linked_list->Get(index);
     }
 
-    int Get_length() const override {
+    int Get_length() override {
         return Linked_list->Get_length();
     }
 
-    Sequence<T>* Get_subsequence(int start_index, int end_index) const override {
+    Sequence<T>* Get_subsequence(int start_index, int end_index) override {
         Doubly_Circular_Linked_list<T> sublist = this->Linked_list->Get_sublist(start_index, end_index);
         List_Sequence<T>* sequence = new List_Sequence<T>;
         Node<T>* current = sublist->head;
@@ -44,32 +49,32 @@ public:
     }
 
     Sequence<T>* Append(T item) override {
-        Linked_list.Append(item);
+        Linked_list->Append(item);
         return this;
     }
 
-    Sequence<T>* Prepand(T item) override {
-        Linked_list.Prepand(item);
+    Sequence<T>* Prepend(T item) override {
+        Linked_list->Prepend(item);
         return this;
     }
 
     Sequence<T>* Insert_At(T item, int index) override {
-        Linked_list.Insert_At(item, index);
+        Linked_list->Insert_At(item, index);
         return this;
     }
 
-    Sequence<T>* Concat(Sequence<T>& list) override {
+    Sequence<T>* Concat(const Sequence<T>& list) override {
         for (int i = 0; i < list.Get_length(); ++i) {
-            Linked_list.Append(list.Get(i));
+            Linked_list->Append(list.Get(i));
         }
         return this;
     }
 
 
-    T& operator[](const int index) const override {
-        if (index < 0 || index >= Linked_list.Get_length()) throw Index_Out_of_range;
+    T& operator[](const int index) override {
+        if (index < 0 || index >= Linked_list->Get_length()) throw ERRORS::Index_Out_of_range;
 
-        Node<T>* current = Linked_list.GetNode(index);
+        Node<T>* current = Linked_list->GetNode(index);
         return current->item;
     }
 };

@@ -1,4 +1,5 @@
 TARGET = lab_2
+
 CC = g++
 
 PREF_SRC = ./src/
@@ -8,10 +9,10 @@ SRC = $(wildcard $(PREF_SRC)*.cpp)
 OBJ = $(patsubst $(PREF_SRC)%.cpp, $(PREF_OBJ)%.o, $(SRC))
 
 $(TARGET): $(OBJ)
-[TAB]$(CC) $(OBJ) -o $(TARGET) -lm
+  $(CC) $(OBJ) -o $(TARGET) -lm
 
-$(PREF_OBJ)%.o : $(PREF_SRC)%.cpp
-[TAB]$(CC) -c $< -o $@
+$(PREF_OBJ)%.o: $(PREF_SRC)%.cpp
+  $(CC) -c $< -o $@
 
 clean:
-[TAB]rm -f $(TARGET) $(PREF_OBJ)*.o
+  rm $(TARGET) $(PREF_OBJ)*.o

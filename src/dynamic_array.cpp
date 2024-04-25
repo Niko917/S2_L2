@@ -5,9 +5,14 @@
 
 
 template <typename T>
-T Dynamic_Array<T>::Get(int index) {
+T* Dynamic_Array<T>::Get_data() const {
+    return this->items;
+}
+
+template <typename T>
+T Dynamic_Array<T>::Get(int index) const {
     if (index < 0 || index >= size) {
-        throw Index_Out_of_range;
+        throw ERRORS::Index_Out_of_range;
     }
     else {
         auto tmp = this->items[index];
@@ -16,54 +21,37 @@ T Dynamic_Array<T>::Get(int index) {
 }
 
 template <typename T>
-int Dynamic_Array<T>::Get_size() const {
-    if (this->Get_size() == 0) throw Sequence_is_empty;
+int Dynamic_Array<T>::Get_size() const{
+    if (size == 0) throw ERRORS::Sequence_is_empty;
     return size;
 }
 
 template <typename T>
 void Dynamic_Array<T>::Set(int index, T value) {
     if (index < 0 || index >= size){
-        throw Index_Out_of_range;
+        throw ERRORS::Index_Out_of_range;
     }
-
-    else {
-        this->items[index] = value;
-    }
+    value = items[index];
 }
 
 template <typename T>
-T* Dynamic_Array<T>::Resize(size_t New_size) {
-    if (New_size < 0) {
-        throw Index_Out_of_range;
-    }
+void Dynamic_Array<T>::Resize(size_t New_size) {
 
+    T* New_arr = new T[New_size];
+    if (items == nullptr) {
+        throw ERRORS::Null_pointer_error;
+    }
     else {
-        T* New_arr = new T[New_size];
-       
         std::copy(items, items + std::min(size, New_size), New_arr);
 
         delete[] items;
+
         items = New_arr;
         size = New_size;
-
-        return this;
     }
 }
 
-
 template <typename T>
-Dynamic_Array<T>* Dynamic_Array<T>::Get_subsequence(int start_index, int end_index) const {
-    if (start_index < 0 || end_index < 0 || start_index >= size || end_index > size || start_index > end_index) {
-        throw Index_Out_of_range;
-    }
-    
-    size_t subsize = end_index - start_index;
-    T* subitems = new T[subsize];
-    
-    for (int i = 0; i < subsize; ++i) {
-        subitems[i] = items[start_index + i];
-    }
-    
-    return new Dynamic_Array<T>(subitems, subsize);
+T& Dynamic_Array<T>::operator[](const int index) const {
+    return this->items[index];
 }

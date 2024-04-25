@@ -1,3 +1,7 @@
+#ifndef ARRAY_H
+#define ARRAY_H
+
+#include <cstring>
 #include <stddef.h>
 #include "Sequence.h"
 
@@ -10,6 +14,11 @@ private:
     int capacity;
 
 public:
+    Dynamic_Array() {
+        items = nullptr;
+        size = 0;
+    };
+
     Dynamic_Array(size_t size) {
         T* arr = new T[size];
         items = arr;
@@ -17,16 +26,14 @@ public:
     }
 
     Dynamic_Array(const Dynamic_Array<T>& Array) {
-        size_t size = Array.Get_size();
-        items = new T[size];
-
-        for (size_t i = 0; i < size; ++i) {
-            items[i] = Array->Get(i); 
-        }
-        this->size = size;
+        size = Array.Get_size();
+        T* tmp = new T[size];
+        items = tmp;
+        
+        memcpy(items, Array.items, size * sizeof(T));
     }
-    // Copy constructor
-    
+
+
     Dynamic_Array(T* items, int count) {
         this->items = new T[count];
         memcpy(this->items, items, count * sizeof(T));
@@ -37,20 +44,21 @@ public:
         delete[] items;
     }
 
-    T operator [] (const int index) const;
+    T& operator [] (const int index) const;
 
     ////////////////////////////////////////////
     // METHODS
-    // 
-    T Get(int index);
+    //
+    
+    T* Get_data() const;
+
+    T Get(int index) const;
 
     int Get_size() const;
 
     void Set(int index, T value);
 
-    T* Resize(size_t New_size);
-
-    Dynamic_Array<T>* Get_subsequence(int start_index, int end_index) const;
+    void Resize(size_t New_size);
 };
 
-
+#endif // ARRAY_H

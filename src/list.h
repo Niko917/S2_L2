@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstddef>
 
 template <typename T>
@@ -23,7 +25,6 @@ private:
 
 public:
    
-    Doubly_Circular_Linked_list(size_t size) : head(nullptr), tail(nullptr), size(0) {}
 
     Doubly_Circular_Linked_list(T* items, int count) {
         for (int i = 0; i < count; ++i) {
@@ -66,23 +67,25 @@ public:
     Node<T>* GetNode(int index) const;
 
 
-    T Get_first();
+    T Get_first() const;
 
-    T Get_last();
+    T Get_last() const;
 
-    T Get(int index);
+    T Get(int index) const;
 
-    Doubly_Circular_Linked_list<T>* Get_sublist(int start_index, int end_index);
+    Doubly_Circular_Linked_list<T>* Get_sublist(int start_index, int end_index) const;
 
-    int Get_length();
+    int Get_length() const;
 
     void Append(T item);
 
-    void Prepand(T item);
+    void Prepend(T item);
 
     void Insert_At(T item, int index);
 
     Doubly_Circular_Linked_list<T>* Concat(Doubly_Circular_Linked_list<T>* list);
+
+    T& operator[](const int index) const;
 };
 
 
