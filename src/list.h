@@ -73,17 +73,25 @@ public:
 
     T Get(int index) const;
 
+    void Set(const T& item, int index);
+
     Doubly_Circular_Linked_list<T>* Get_sublist(int start_index, int end_index) const;
 
     int Get_length() const;
 
-    void Append(T item);
+    void Append(T& item);
 
-    void Prepend(T item);
+    void Prepend(T& item);
 
-    void Insert_At(T item, int index);
+    void Insert_At(T& item, int index);
+
+    void Resize(size_t New_size);
 
     Doubly_Circular_Linked_list<T>* Concat(Doubly_Circular_Linked_list<T>* list);
+
+    bool empty() const;
+
+    void clear();
 
     T& operator[](const int index) const;
 };

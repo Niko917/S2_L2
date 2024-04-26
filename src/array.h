@@ -1,5 +1,4 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#pragma once
 
 #include <cstring>
 #include <stddef.h>
@@ -14,10 +13,7 @@ private:
     int capacity;
 
 public:
-    Dynamic_Array() {
-        items = nullptr;
-        size = 0;
-    };
+    Dynamic_Array() {};
 
     Dynamic_Array(size_t size) {
         T* arr = new T[size];
@@ -56,9 +52,18 @@ public:
 
     int Get_size() const;
 
-    void Set(int index, T value);
+    void Set(int index, T& value);
 
     void Resize(size_t New_size);
+
+    void Append(const T& item);
+
+    void Prepend(const T& item);
+
+    void Insert_At(const T& item, int index);
+
+    bool epmty() const;
+
+    void clear();
 };
 
-#endif // ARRAY_H

@@ -8,8 +8,17 @@
 template <typename T>
 class List_Sequence : public Sequence<T> {
 
-private:
+protected:
     Doubly_Circular_Linked_list<T>* Linked_list;
+
+    void Append_Internal(const T& item) const;
+    void Prepend_Internal(const T& item) const;
+    void Set_Internal(const T& item, int index);
+    void Insert_At_Internal(T& item, int index);
+    void Resize_Internal(size_t New_size);
+    void Concat_Internal(const Sequence<T>& list);
+    void clear_Internal();
+
 public:
     
     List_Sequence() : Linked_list(new Doubly_Circular_Linked_list<T>()) {}
@@ -19,65 +28,26 @@ public:
     List_Sequence<T>* Instance() = 0;
 
 
-    T Get_first() override {
-        return Linked_list->Get_first();
-    }
+    T Get_first() override;
     
-    T Get_last() override {
-        return Linked_list->Get_last();
-    }
+    T Get_last() override;
 
-    T Get(int index) override {
-        return Linked_list->Get(index);
-    }
+    T Get(int index) override;
 
-    int Get_length() override {
-        return Linked_list->Get_length();
-    }
+    int Get_length() override;
+    
+    // --------------------------------------------------
 
-    Sequence<T>* Get_subsequence(int start_index, int end_index) override {
-        Doubly_Circular_Linked_list<T> sublist = this->Linked_list->Get_sublist(start_index, end_index);
-        List_Sequence<T>* sequence = new List_Sequence<T>;
-        Node<T>* current = sublist->head;
+    List_Sequence<T>* Append(const T& item) override;
 
-        for (int i = start_index; i <= end_index; ++i) {
-            sequence->Append(current->item);
-            current = current->next;
-        }
-        delete sublist;
-        return sequence;
-    }
+    List_Sequence<T>* Prepend(const T& item) override;
 
-    Sequence<T>* Append(T item) override {
-        Linked_list->Append(item);
-        return this;
-    }
+    List_Sequence<T>* Insert_At(const T& item, int index) override;
 
-    Sequence<T>* Prepend(T item) override {
-        Linked_list->Prepend(item);
-        return this;
-    }
+    List_Sequence<T>* Concat(const Sequence<T>& list) override;
 
-    Sequence<T>* Insert_At(T item, int index) override {
-        Linked_list->Insert_At(item, index);
-        return this;
-    }
+    T& operator[](const int index) override;
 
-    Sequence<T>* Concat(const Sequence<T>& list) override {
-        for (int i = 0; i < list.Get_length(); ++i) {
-            Linked_list->Append(list.Get(i));
-        }
-        return this;
-    }
-
-
-    T& operator[](const int index) override {
-        if (index < 0 || index >= Linked_list->Get_length()) throw ERRORS::Index_Out_of_range;
-
-        Node<T>* current = Linked_list->GetNode(index);
-        return current->item;
-    }
 };
 
 ////////////////////////////////////////////////////////////////////////////
-
