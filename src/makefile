@@ -1,18 +1,37 @@
+# compiler definition
+CXX = g++
+
+# compilation options
+CXXFLAGS = -g -std=c++17
+
+# name of object file (.o)
 TARGET = lab_2
 
-CC = g++
+# cpp files for compiling
+SRC = tests_dynamic.cpp \
+	tests_linked_list.cpp \
+	tests_list_seq.cpp \
+	tests_arr_seq.cpp \
+	main.cpp 
 
-PREF_SRC = ./src/
-PREF_OBJ = ./obj/
+# creating obj from cpp
+OBJ = $(SRC:.cpp=.o)
 
-SRC = $(wildcard $(PREF_SRC)*.cpp)
-OBJ = $(patsubst $(PREF_SRC)%.cpp, $(PREF_OBJ)%.o, $(SRC))
 
+all: $(TARGET)
+
+# linking obj to cpp
 $(TARGET): $(OBJ)
-  $(CC) $(OBJ) -o $(TARGET) -lm
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(PREF_OBJ)%.o: $(PREF_SRC)%.cpp
-  $(CC) -c $< -o $@
+# compiling .cpp to .o
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+
+# cleaning
 clean:
-  rm $(TARGET) $(PREF_OBJ)*.o
+	rm -f $(OBJ) $(TARGET)
+
+
+.PHONY: all clean

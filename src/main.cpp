@@ -1,7 +1,19 @@
 #include <iostream>
-#include "test_all.h"
+#include "tests_linked_list.hpp"
+#include "tests_list_seq.hpp"
+#include "tests_dynamic.hpp"
+#include "tests_arr_seq.hpp"
+
+
+
 
 int main() {
-    runAllTests();
+
+    Test_Dynamic_Array();
+    Test_Linked_list();
+
+    Test_Array_Sequence();
+    Test_List_Sequence();
+
     return 0;
 }
