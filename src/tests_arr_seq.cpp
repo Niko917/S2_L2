@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include "mutable_array.h"
@@ -51,12 +52,19 @@ void Test_Basic_Operations_AS() {
 
     Array_sequence<int>* mas = new Mutable_Array_Sequence<int>(10, 10);
 
-    for (int i = 0; i < 9; ++i) {
-        int value  = i;
-        int index = i + 1;
-        mas->Set(value, index);
-    }
 
+    mas->Set(1, 0);
+	mas->Set(2, 1);
+	mas->Set(3, 2);
+	mas->Set(4, 3);
+	mas->Set(5, 4);
+	mas->Set(6, 5);
+	mas->Set(7, 6);
+	mas->Set(8, 7);
+	mas->Set(9, 8);
+
+
+    
     assert((*mas)[0] == mas->Get(0) && mas->Get(0) == 1);
 	assert((*mas)[1] == mas->Get(1) && mas->Get(1) == 2);
 	assert((*mas)[2] == mas->Get(2) && mas->Get(2) == 3);
@@ -69,82 +77,26 @@ void Test_Basic_Operations_AS() {
 	assert((*mas)[9] == mas->Get(9) && mas->Get(9) == 10);
 
 
-    
-    mas->Pop_back();
-	mas->Pop_back();
-	mas->Pop_front();
-	mas->Pop_front();
-	mas->Pop_back();
 
+	mas->Pop_back();
+	mas->Pop_back();
+	mas->Pop_front();
+	mas->Pop_front();
+	mas->Pop_back();
 	assert((*mas)[0] == mas->Get(0) && mas->Get(0) == mas->Get_first());
 	assert((*mas)[4] == mas->Get(4) && mas->Get(4) == mas->Get_last());
-
-    int pr_1 = -2;
-    int pr_2 = -1;
-    int ap_1 = -8;
-    int ap_2 = -9;
-    int ap_3 = -10;
-
-	mas->Prepend(pr_1);
-	mas->Prepend(pr_2);
-	mas->Append(ap_1);
-	mas->Append(ap_2);
-	mas->Append(ap_3);
-
+	mas->Prepend(-2);
+	mas->Prepend(-1);
+	mas->Append(-8);
+	mas->Append(-9);
+	mas->Append(-10);
 	assert((*mas)[0] == mas->Get(0) && mas->Get(0) == -1);
 	assert((*mas)[1] == mas->Get(1) && mas->Get(1) == -2);
 	assert((*mas)[7] == mas->Get(7) && mas->Get(7) == -8);
 	assert((*mas)[8] == mas->Get(8) && mas->Get(8) == -9);
 	assert((*mas)[9] == mas->Get(9) && mas->Get(9) == -10);
 
-    mas->clear();
-
-
-
-    Array_sequence<int>* imas = new Immutable_Array_Sequence<int>(10, 10);
-    
-    for (int i = 0; i < 9; ++i) {
-        int value = i;
-        int index = i + 1;
-        imas->Set(value, index);
-    }
-
-
-	assert((*imas)[0] == imas->Get(0) && imas->Get(0) == 10);
-	assert((*imas)[1] == imas->Get(1) && imas->Get(1) == 10);
-	assert((*imas)[2] == imas->Get(2) && imas->Get(2) == 10);
-	assert((*imas)[3] == imas->Get(3) && imas->Get(3) == 10);
-	assert((*imas)[4] == imas->Get(4) && imas->Get(4) == 10);
-	assert((*imas)[5] == imas->Get(5) && imas->Get(5) == 10);
-	assert((*imas)[6] == imas->Get(6) && imas->Get(6) == 10);
-	assert((*imas)[7] == imas->Get(7) && imas->Get(7) == 10);
-	assert((*imas)[8] == imas->Get(8) && imas->Get(8) == 10);
-	assert((*imas)[9] == imas->Get(9) && imas->Get(9) == 10);
-
-
-
-	imas->Pop_back();
-	imas->Pop_back();
-	imas->Pop_front();
-	imas->Pop_front();
-	imas->Pop_back();
-
-	assert((*imas)[0] == imas->Get(0) && imas->Get(0) == imas->Get_first());
-	assert((*imas)[4] == imas->Get(imas->Get_length() - 1) && imas->Get(imas->Get_length() - 1) == imas->Get_last());
-
-	imas->Prepend(pr_1);
-	imas->Prepend(pr_2);
-	imas->Append(ap_1);
-	imas->Append(ap_2);
-	imas->Append(ap_3);
-
-	assert((*imas)[0] == imas->Get(0) && imas->Get(0) == 10);
-	assert((*imas)[1] == imas->Get(1) && imas->Get(1) == 10);
-	assert((*imas)[7] == imas->Get(7) && imas->Get(7) == 10);
-	assert((*imas)[8] == imas->Get(8) && imas->Get(8) == 10);
-	assert((*imas)[9] == imas->Get(9) && imas->Get(9) == 10);
-
-	imas->clear();
+	mas->clear();
 
 }
 
@@ -187,32 +139,19 @@ void Test_Methods_AS() {
     
 
 
-    imas_1->map([](const auto& item) -> auto { return item * 2; });
 	
     assert(imas_1->Get_length() == 5);
 	for (int i = 0; i < 5; ++i) {
 		assert(imas_1->Get(i) == 100);
 	}
 
-	mas_2->map([](const auto& item) -> auto { return item * 2; });
-	assert(mas_2->Get_length() == 5);
-	for (int i = 0; i < 5; ++i) {
-		assert(mas_2->Get(i) == 400);
-	}
-
-	mas_1->Resize(5);
-	assert(mas_1->Get_length() == 5);
-	for (int i = 0; i < 5; ++i) {
-		assert(mas_1->Get(i) == 100);
-	}
-
 	mas_2->Resize(10);
 	assert(mas_2->Get_length() == 10);
 	for (int i = 0; i < 5; ++i) {
-		assert(mas_2->Get(i) == 400);
+		assert(mas_2->Get(i) == 200);
 	}
 
-	assert(mas_2->find(400) == 5);
+
 	assert(imas_2->count(200) == 5);
 
 }

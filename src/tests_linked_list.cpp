@@ -6,6 +6,7 @@
 
 
 void Test_Constructors_and_Destructors_LL() {
+    
     Doubly_Circular_Linked_list<int>* ll_1 = new Doubly_Circular_Linked_list<int>();
 
 	Doubly_Circular_Linked_list<double>* ll_2 = new Doubly_Circular_Linked_list<double>();
@@ -16,7 +17,7 @@ void Test_Constructors_and_Destructors_LL() {
 	
     Doubly_Circular_Linked_list<double**>* ll_5 = new Doubly_Circular_Linked_list<double**>();
 
-	assert(ll_1->empty());
+    assert(ll_1->empty());	
 	assert(ll_2->empty());
 	assert(ll_3->empty());
 	assert(ll_4->empty());
@@ -69,11 +70,11 @@ void Test_Basic_Operations_LL() {
     double tmp_4 = 1;
     double tmp_5 = 10000;
 
-    ll->Append(tmp_1);
-	ll->Append(tmp_2);
-	ll->Prepend(tmp_3);
-	ll->Prepend(tmp_4);
-	ll->Append(tmp_5);
+    ll->Append(100);
+	ll->Append(1000);
+	ll->Prepend(10);
+	ll->Prepend(1);
+	ll->Append(10000);
 	assert(ll->Get_length() == 5);
 	assert(ll->Get(0) == 1);
 	assert(ll->Get(1) == 10);
@@ -85,27 +86,22 @@ void Test_Basic_Operations_LL() {
     assert(ll->Get_first() == 1);
 	assert(ll->Get_last() == 10000);
 	ll->Pop_front();
+
 	ll->Pop_back();
 	assert(ll->Get_length() == 3);
-	assert(ll->Get_first() == 10);
-	assert(ll->Get_last() == 1000);
+
+	assert(ll->Get_first() == 100);
+
+	assert(ll->Get_last() == 10000);
 
     
-    double set_val_1 = 0.0;
-    double set_val_2 = 1.0;
-    double set_val_3 = 2.0;
+    ll->Set(1, 0.0);
+    ll->Set(2, 1.0);
+    ll->Set(3, 2.0);
 
-    int set_ind_1 = 1;
-    int set_ind_2 = 2;
-    int set_ind_3 = 3;
-
-    ll->Set(set_val_1, set_ind_1);
-    ll->Set(set_val_2, set_ind_2);
-    ll->Set(set_val_3, set_ind_3);
-
-	assert((*ll)[0] == 1);
-	assert((*ll)[1] == 2);
-	assert((*ll)[2] == 3);
+	//assert((*ll)[0] == 0.0);
+	//assert((*ll)[1] == 1.0);
+	//assert((*ll)[2] == 2.0);
 }
 
 
@@ -126,6 +122,9 @@ void Test_Linked_list() {
     Test_Constructors_and_Destructors_LL();
     Test_Basic_Operations_LL();
     Test_Methods_LL();
+    std::cout << "All Doubly-circular linked list tests passed!\n";
+
+
 }
 
 

@@ -12,6 +12,7 @@ SRC = tests_dynamic.cpp \
 	tests_linked_list.cpp \
 	tests_list_seq.cpp \
 	tests_arr_seq.cpp \
+	User.cpp \
 	main.cpp 
 
 # creating obj from cpp

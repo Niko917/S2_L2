@@ -1,6 +1,10 @@
 #pragma once
 
+#include <complex>
+#include <cstdint>
 #include <cstring>
+#include <iostream>
+#include <new>
 #include <stddef.h>
 #include "Sequence.h"
 #include "exceptions.h"
@@ -15,10 +19,10 @@ class Dynamic_Array {
 private:
     T* items;
     size_t size;
-    int capacity;
+    size_t capacity;
 
 public:
-    Dynamic_Array() {};
+    Dynamic_Array();
 
     Dynamic_Array(size_t size); 
 
@@ -49,6 +53,8 @@ public:
     void Set(T value, size_t index);
 
     void Resize(size_t New_size);
+
+    void reallocation();
 
     void Append(T item);
 
@@ -83,6 +89,7 @@ Dynamic_Array<T>::Dynamic_Array(size_t size) {
     T* arr = new T[size];
     this->items = arr;
     this->size = size;
+    this->capacity = size;
 }
 
 
@@ -105,6 +112,15 @@ Dynamic_Array<T>::Dynamic_Array(T* items, size_t count) {
 
 
 template <typename T>
+Dynamic_Array<T>::Dynamic_Array() {
+    this->items = nullptr;
+    this->size = 0;
+    this->capacity = 0;
+}
+
+
+
+template <typename T>
 Dynamic_Array<T>::~Dynamic_Array() {
     delete[] this->items;
 }
@@ -122,7 +138,10 @@ T* Dynamic_Array<T>::Get_data() const {
 
 template <typename T>
 bool Dynamic_Array<T>::empty() const {
-    return (!this->Get_size()) ? false : true;
+    if (this->Get_size() == 0){
+        return true;
+    }
+    return false;
 }
 
 
@@ -138,20 +157,17 @@ void Dynamic_Array<T>::clear() {
 
 template <typename T>
 T Dynamic_Array<T>::Get(size_t index) const {
-    if (index < 0 || index >= size) {
+    if (index >= this->Get_size()) {
         throw ERRORS::Index_Out_of_range;
     }
-    else {
-        auto tmp = this->items[index];
-        return tmp;
-    }
+    return (*this)[index];
 }
 
 
 
 template <typename T>
 size_t Dynamic_Array<T>::Get_size() const{
-    return size;
+    return this->size;
 }
 
 
@@ -171,7 +187,7 @@ T Dynamic_Array<T>::Get_last() const {
 
 template <typename T>
 void Dynamic_Array<T>::Set(T value, size_t index) {
-    if (index < 0 || index >= size){
+    if (index >= size){
         throw ERRORS::Index_Out_of_range;
     }
     items[index] = value;
@@ -181,18 +197,28 @@ void Dynamic_Array<T>::Set(T value, size_t index) {
 
 template <typename T>
 void Dynamic_Array<T>::Resize(size_t New_size) {
-
-    T* New_arr = new T[New_size];
-    if (items == nullptr) {
-        throw ERRORS::Null_pointer_error;
+    
+    if (New_size == 0) {
+        this->clear();
     }
-    else {
-        std::copy(items, items + std::min(size, New_size), New_arr);
+    else if (New_size < this->Get_size()) {
+        size_t df = this->Get_size() - New_size;
+        for (size_t i = 0; i < df; ++i) {
+            this->Pop_back();
+        }
+    }
+    else if (New_size > this->Get_size()) {
+        T* new_arr = new T[New_size];
+        for (size_t i = 0; i < this->Get_size(); ++i) {
+            new_arr[i] = this->items[i];
+        }
 
-        delete[] items;
-
-        items = New_arr;
-        size = New_size;
+        for (size_t i = this->Get_size(); i < New_size; ++i) {
+            new_arr[i] = T();
+        }
+        delete[] this->items;
+        this->items = new_arr;
+        this->size = New_size;
     }
 }
 
@@ -200,64 +226,112 @@ void Dynamic_Array<T>::Resize(size_t New_size) {
 
 template <typename T>
 void Dynamic_Array<T>::Append(T item) {
-    if (size >= capacity) {
-        size_t new_capacity = capacity == 0 ? 1 : capacity * 2;
-        Resize(new_capacity);
-    }
-    items[size] = item;
-    size++;
+    reallocation();
+    this->items[this->size] = item;
+    this->size++;
 }
-
 
 
 template <typename T>
 void Dynamic_Array<T>::Prepend(T item) {
-    Insert_At(item, 0);
+    if (this->size >= this->capacity) {
+		this->capacity *= 2;
+		T* new_array = new T[this->capacity];
+		new_array[0] = item;
+		for (size_t i = 0; i < this->size; ++i) {
+			new_array[i + 1] = this->items[i];
+		}
+		delete[] this->items;
+		this->items = new_array;
+	}
+	else {
+		for (size_t i = this->size; i > 0; --i) {
+			this->items[i] = this->items[i - 1];
+		}
+		this->items[0] = item;
+	}
+	this->size++;
 }
+
 
 
 template <typename T>
 void Dynamic_Array<T>::Pop_back() {
-    if (size <= 0) throw ERRORS::Sequence_is_empty;
-    T* new_items = new T[size - 1];
+    if (this->empty()) {
+        throw ERRORS::Sequence_is_empty;
+    }
+    else {
+        this->capacity--;
+        T* new_array = new T[this->capacity];
+        for (size_t i = 0; i < this->size - 1; ++i) {
+            new_array[i] = this->items[i];
+        }
+        delete[] this->items;
+        this->items = new_array;
+        this->size--;
 
-    memcpy(new_items, items + 1, size - 1 * sizeof(T));
-    delete[] items;
-    items = new_items;
-    size--;
+    }
 }
 
 
 template <typename T>
 void Dynamic_Array<T>::Pop_front() {
-    if (size <= 0) throw ERRORS::Sequence_is_empty;
+    if (this->empty()) {
+        throw ERRORS::Sequence_is_empty;
+    }
+    else {
+        T* new_arr = new T[this->capacity];
+        for (size_t i = 1; i < this->size; ++i) {
+            new_arr[i - 1] = this->items[i];
+        }
+        delete[] this->items;
+        this->items = new_arr;
+        this->size--;
+    }
 
-    T* new_items = new T[size - 1];
-    memcpy(new_items, items, (size - 1) * sizeof(T));
-
-    delete[] items;
-    items = new_items;
-    size--;
 }
+
+
+
+template <typename T>
+void Dynamic_Array<T>::reallocation() {
+    if (this->size == this->capacity) {
+        size_t new_capacity = this->capacity == 0 ? 1 : this->capacity * 2;
+    
+        // std::cout << "Capacity: " << this->capacity << ", New capacity: " << new_capacity << std::endl;
+
+        T* new_array = new T[new_capacity];
+    
+        for (size_t i = 0; i < this->size; ++i) {
+            new_array[i] = this->items[i];
+        }
+
+        delete[] this->items;
+        this->items = new_array;
+        this->capacity = new_capacity;
+    }
+}
+
 
 
 template <typename T>
 void Dynamic_Array<T>::Insert_At(T item, size_t index) {
-    if (index < 0 || index > size) {
-        throw ERRORS(ERRORS::Index_Out_of_range);
+
+    if (index > this->size) throw ERRORS::Index_Out_of_range;
+
+    if (this->empty() && index != 0) throw ERRORS::Sequence_is_empty;
+   
+    if (this->size >= this->capacity) {
+        reallocation();
     }
 
-    if (size >= capacity) {
-        size_t new_capacity = capacity == 0 ? 1 : capacity * 2;
-        Resize(new_capacity);
-    }
-
-    for (size_t i = size; i > index; --i) {
+    for (size_t i = this->size; i >= index; --i) {
         items[i] = items[i - 1];
     }
 
     items[index] = item;
-    size++;
+    this->size++;
+
 }
 
 

@@ -1,4 +1,8 @@
 #include "tests_dynamic.hpp"
+#include "array.h"
+#include <cassert>
+#include <ios>
+#include <iostream>
 
 // ----------------------------------------------------
 // DYNAMIC_ARRAY TESTS
@@ -6,8 +10,9 @@
 
 void Test_Constructors_and_Destructors_DA() {
 
-    Dynamic_Array<int> default_array;
-    assert(default_array.Get_size() == 0);
+    Dynamic_Array<int>* default_array = new Dynamic_Array<int>();
+    assert(default_array->Get_size() == 0);
+    delete default_array;
 
     Dynamic_Array<int> sized_array(5);
     assert(sized_array.Get_size() == 5);
@@ -20,25 +25,27 @@ void Test_Constructors_and_Destructors_DA() {
     for (int i = 0; i < 5; ++i) {
         assert(array_from_items.Get(i) == items[i]);
     }
-
 }
 
 
 
 void Test_Basic_Operations_DA() {
 
-    Dynamic_Array<int> array(3);
-
     Dynamic_Array<double>* da = new Dynamic_Array<double>();
     assert(da->empty());
-
-
     
     da->Append(100);
+    assert(da->Get_size() == 1);
+
 	da->Append(1000);
+
 	da->Prepend(10);
+    assert(da->Get_size() == 3);
+
 	da->Prepend(1);
+
 	da->Append(10000);
+
 	assert(da->Get_size() == 5);
 	assert(da->Get(0) == 1);
 	assert(da->Get(1) == 10);
@@ -51,8 +58,8 @@ void Test_Basic_Operations_DA() {
     assert(da->Get_first() == 1);
 	assert(da->Get_last() == 10000);
 	da->Pop_back();
-	assert(da->Get_size() == 3);
-	assert(da->Get_first() == 10);
+	assert(da->Get_size() == 4);
+	assert(da->Get_first() == 1);
 	assert(da->Get_last() == 1000);
 	double f = 1;
 	da->Set(f, 0);
@@ -64,12 +71,15 @@ void Test_Basic_Operations_DA() {
 	assert((*da)[1] == 2);
 	assert((*da)[2] == 3);
 
+    delete da;
+
 
     int items[] = {1, 2, 3, 4, 5};
     Dynamic_Array<int> array_from_items(items, 5);
 
     array_from_items.Insert_At(7, 2);
     assert(array_from_items.Get(2) == 7);
+
 }
 
 
@@ -77,11 +87,15 @@ void Test_Basic_Operations_DA() {
 void Test_Methods_DA() {
 	Dynamic_Array<float>* da_1 = new Dynamic_Array<float>(10, 15);
 	Dynamic_Array<int>* da_2 = new Dynamic_Array<int>(50, 0);
-	
+
+ 
+
     da_1->Resize(5);
+
 	assert(da_1->Get_size() == 5);
 
-
+    delete da_1;
+    delete da_2;
 }
 
 

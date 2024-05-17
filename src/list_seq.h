@@ -178,7 +178,7 @@ void List_Sequence<T>::Pop_back_Internal() {
 
 template <typename T>
 void List_Sequence<T>::Set_Internal(T item, size_t index) {
-    Linked_list->Set(index, item);
+    Linked_list->Set(item, index);
 }
 
 
@@ -262,7 +262,7 @@ List_Sequence<T>* List_Sequence<T>::Insert_At(T item, size_t index) {
 template <typename T>
 List_Sequence<T>* List_Sequence<T>::Set(T item, size_t index) {
     List_Sequence<T>* instance = Instance();
-    instance->Set(item, index);
+    instance->Set_Internal(item, index);
     return instance;
 
 }
@@ -271,7 +271,7 @@ List_Sequence<T>* List_Sequence<T>::Set(T item, size_t index) {
 template <typename T>
 List_Sequence<T>* List_Sequence<T>::Resize(size_t New_size) {
     List_Sequence<T>* instance = Instance();
-    instance->Resize(New_size);
+    instance->Resize_Internal(New_size);
     return instance;
 }
 

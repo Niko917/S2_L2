@@ -19,6 +19,13 @@ class Sequence {
         virtual size_t Get_length() const = 0;
 
         virtual Sequence<T>* Get_subsequence(size_t start_index, size_t end_index) const = 0;
+
+        bool empty() const {
+            if (this->Get_length() == 0) {
+                return true;
+            }
+            return false;
+        }
         
         virtual T& operator [] (const int index) const = 0;
 

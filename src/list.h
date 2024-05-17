@@ -29,7 +29,7 @@ public:
 
     Doubly_Circular_Linked_list(T* items, size_t count);
 
-    Doubly_Circular_Linked_list() {}
+    Doubly_Circular_Linked_list();
 
 
     Doubly_Circular_Linked_list(int size, T default_element);
@@ -58,7 +58,7 @@ public:
 
     Doubly_Circular_Linked_list<T>* Get_sublist(size_t start_index, size_t end_index) const;
 
-    int Get_length() const;
+    size_t Get_length() const;
 
     void Append(T item);
 
@@ -78,13 +78,19 @@ public:
 
     void clear();
 
-    T& operator[](const int index) const;
+    T& operator[](const size_t index) const;
 };
 
 
 
 // -------------------------------------
 // constructors and Destructors
+
+
+template <typename T>
+Doubly_Circular_Linked_list<T>::Doubly_Circular_Linked_list() : head(nullptr), tail(nullptr), size(0) {}
+
+
 
 template <typename T>
 Doubly_Circular_Linked_list<T>::Doubly_Circular_Linked_list(T* items, size_t count) {
@@ -103,7 +109,7 @@ Doubly_Circular_Linked_list<T>::Doubly_Circular_Linked_list(const Doubly_Circula
             this->Append(current->item);
             current = current->next;
         }
-        while (current != head);
+        while (current != list.head);
     }
 }
 
@@ -124,15 +130,7 @@ Doubly_Circular_Linked_list<T>::Doubly_Circular_Linked_list(int size, T default_
 
 template <typename T>
 Doubly_Circular_Linked_list<T>::~Doubly_Circular_Linked_list() {
-    if (head) {
-        Node<T>* current = head;
-        do {
-            Node<T>* next = current->next;
-            delete current;
-            current = next;
-        }
-        while (current != head);
-    }
+    clear();
 }
 
 ////////////////////////////////////////
@@ -167,11 +165,14 @@ T Doubly_Circular_Linked_list<T>::Get_last() const {
 
 template <typename T>
 T Doubly_Circular_Linked_list<T>::Get(size_t index) const {
-    if (index < 0 || index >= size) throw ERRORS::Index_Out_of_range;
+    if (index >= size) throw ERRORS::Index_Out_of_range;
+
+    if (head == nullptr) throw ERRORS::Sequence_is_empty;
     Node<T>* current = head;
-    for (int i = 0; i < index; ++i) {
+    for (size_t i = 0; i < index; ++i) {
         current = current->next;
     }
+    if (current == nullptr) throw ERRORS::Null_pointer_error;
     return current->item;
 }
 
@@ -200,7 +201,7 @@ Doubly_Circular_Linked_list<T>* Doubly_Circular_Linked_list<T>::Get_sublist(size
 
 
 template <typename T>
-int Doubly_Circular_Linked_list<T>::Get_length() const {
+size_t Doubly_Circular_Linked_list<T>::Get_length() const {
     return size;
 }
 
@@ -208,7 +209,7 @@ int Doubly_Circular_Linked_list<T>::Get_length() const {
 
 template <typename T>
 void Doubly_Circular_Linked_list<T>::Set(T item, size_t index) {
-    if (index < 0 || index >= Get_length()) {
+    if (index >= Get_length()) {
         throw ERRORS::Index_Out_of_range; 
     }
     
@@ -222,15 +223,17 @@ template <typename T>
 void Doubly_Circular_Linked_list<T>::Append(T item) {
     Node<T>* new_node = new Node<T>(item);
     if (size == 0) {
-        new_node = tail = head;
-        head->prev = head->next = new_node;
+        tail = head = new_node;
+        head->next = head;
+        head->prev = head;
     }
     else {
         new_node->next = head;
         new_node->prev = tail;
 
-        head->prev = new_node;
+        
         tail->next = new_node;
+        head->prev = new_node;
         tail = new_node; 
     }
     size++;
@@ -262,15 +265,19 @@ template <typename T>
 void Doubly_Circular_Linked_list<T>::Pop_front() {
     if (head == nullptr) throw ERRORS::Sequence_is_empty;
 
+    Node<T>* to_remove = head;
+
     if (head == tail) {
-        head = tail = nullptr;
+        head = nullptr; 
+        tail = nullptr;
     }
     else {
         head = head->next;
         head->prev = tail;
         tail->next = head;
     }
-
+    
+    delete to_remove;
     size--;
 
     if (size == 0) {
@@ -284,19 +291,20 @@ template <typename T>
 void Doubly_Circular_Linked_list<T>::Pop_back() {
     if (head == nullptr) throw ERRORS::Sequence_is_empty;
 
+    Node<T>* to_remove = head;
+
     if (head == tail) {
         head = tail = nullptr;
     }
     else {
-        tail = tail->prev;
-        tail->next = head;
+        head = head->next;
         head->prev = tail;
+        tail->next = head;
     }
 
+    delete to_remove;
+
     size--;
-    if (size == 0) {
-        head = tail = nullptr;
-    }
 }
 
 
@@ -317,8 +325,10 @@ void Doubly_Circular_Linked_list<T>::Insert_At(T item, size_t index) {
         }
 
         Node<T>* new_node = new Node<T>(item);
+    
         new_node->prev = current->prev;
-        current->next = current;
+        new_node->next = current;
+
         current->prev->next = new_node;
         current->prev = new_node;
         
@@ -334,19 +344,27 @@ void Doubly_Circular_Linked_list<T>::Resize(size_t New_size) {
     }
     while (New_size < Get_length()) {
         Node<T>* to_remove = tail;
-        if (tail->prev) {
+        if (tail->prev == head) {
+            head->next = head;
+            head->prev = head;
+            tail = head;
+        }
+        else if (tail->prev) {
             tail = tail->prev;
             tail->next = head;
             head->prev = tail;
         }
+        else {
+            head = nullptr;
+            tail = nullptr;
+        }
+
         delete to_remove;
-        if (tail == head) { 
-            delete head;
-            head = tail = nullptr;
+        size--;
+        if (this->size == 0) {
             break;
         }
     }
-    size = New_size;
 }
 
 
@@ -379,11 +397,15 @@ bool Doubly_Circular_Linked_list<T>::empty() const {
 
 template <typename T>
 void Doubly_Circular_Linked_list<T>::clear() {
-    Node<T>* current = head;
+    
     while (size > 0) {
-        Node<T>* next = current->next;
-        delete current;
-        current = next;
+        Node<T>* next = head->next;
+        delete head;
+        head = next;
+        if (head == tail) {
+            head->next = nullptr;
+            head->prev = nullptr;
+        }
         size--;
     }
     head = nullptr;
@@ -393,8 +415,8 @@ void Doubly_Circular_Linked_list<T>::clear() {
 
 
 template <typename T>
-T& Doubly_Circular_Linked_list<T>::operator[](const int index) const {
-    if (index < 0 || index >= size) {
+T& Doubly_Circular_Linked_list<T>::operator[](const size_t index) const {
+    if (index >= size) {
         throw ERRORS(ERRORS::Index_Out_of_range);
     } 
     return GetNode(index)->item;
