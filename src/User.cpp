@@ -682,7 +682,7 @@ int select() {
 			return index;
 		}
 		if (name_sequence == "abort") {
-			return -1011;
+			return -22;
 		}
 		else {
 			std::cout << "Name seq = '" << name_sequence << "' is not found\n";
@@ -690,7 +690,7 @@ int select() {
 		}
 	}
 
-	return -1011;
+	return -22;
 }
 
 // -----------------------------------------------------------------------------------------------------------------
@@ -789,7 +789,7 @@ int Get() {
 	}
 
 	if (bad_count == 0) {
-		return -1011;
+		return -22;
 	}
 	else if (s_indexseq == "abort") {
 		return -1;
@@ -835,7 +835,7 @@ int Set() {
 	}
 
 	if (bad_count == 0) {
-		return -1011;
+		return -22;
 	}
 	else if (s_indexseq == "abort") {
 		return -1;
@@ -934,7 +934,7 @@ int Push() {
 	}
 
 	if (bad_count == 0) {
-		return -1011;
+		return -22;
 	}
 	else if (s_typepush == "abort") {
 		return -1;
@@ -1044,7 +1044,7 @@ int pop() {
 	}
 
 	if (bad_count == 0) {
-		return -1011;
+		return -22;
 	}
 	else if (s_typepop == "abort") {
 		return -1;
