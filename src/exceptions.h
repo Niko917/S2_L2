@@ -11,7 +11,10 @@ enum class ERRORS{
     Memory_allocation_error,
     Sequence_is_empty,
     Invalid_sequence_type,
-    Null_pointer_error
+    Null_pointer_error,
+    Stack_is_empty,
+    Queue_is_empty,
+    Deque_is_empty
 };
 
 
@@ -33,6 +36,15 @@ struct SEQUENCE_EXCEPTION : public std::exception {
 
             case ERRORS::Memory_allocation_error:
                 return "Memory_allocation_error!";
+
+            case ERRORS::Stack_is_empty:
+                return "this Stack is empty!";
+
+            case ERRORS::Queue_is_empty:
+                return "this Queue is empty!";
+
+            case ERRORS::Deque_is_empty:
+                return "this Deque is empty";
 
             default:
                 return "Unknown error";

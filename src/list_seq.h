@@ -13,17 +13,17 @@ protected:
 
     Doubly_Circular_Linked_list<T>* Linked_list;
 
-    void Append_Internal(T item) const;
+    void Append_Internal(const T& item) const;
 
-    void Prepend_Internal(T item) const;
+    void Prepend_Internal(const T& item) const;
 
     void Pop_front_Internal();
 
     void Pop_back_Internal();
 
-    void Set_Internal(T item, size_t index);
+    void Set_Internal(const T& item, size_t index);
 
-    void Insert_At_Internal(T item, size_t index);
+    void Insert_At_Internal(const T& item, size_t index);
 
     void Resize_Internal(size_t New_size);
 
@@ -36,7 +36,7 @@ public:
 
     List_Sequence(T* items, size_t count) : Linked_list(new Doubly_Circular_Linked_list<T>(items, count)) {}
 
-    List_Sequence(int size, T item);
+    List_Sequence(int size, const T& item);
 
     ~List_Sequence();
     
@@ -59,17 +59,17 @@ public:
     
     // --------------------------------------------------
 
-    List_Sequence<T>* Append(T item) override;
+    List_Sequence<T>* Append(const T& item) override;
 
-    List_Sequence<T>* Prepend(T item) override;
+    List_Sequence<T>* Prepend(const T& item) override;
 
     List_Sequence<T>* Pop_front() override;
 
     List_Sequence<T>* Pop_back() override;
 
-    List_Sequence<T>* Insert_At(T item, size_t index) override;
+    List_Sequence<T>* Insert_At(const T& item, size_t index) override;
 
-    List_Sequence<T>* Set(T item, size_t index) override;
+    List_Sequence<T>* Set(const T& item, size_t index) override;
 
     List_Sequence<T>* Get_subsequence(size_t start_index, size_t end_index) const override;
 
@@ -81,9 +81,9 @@ public:
 
     List_Sequence<T>* map(T(*function)(const T&)) override;
 
-    int find(T element) const override;
+    int find(const T& element) const override;
     
-    int count(T element) const override;
+    int count(const T& element) const override;
 
     T& operator[](const int index) const override;
 
@@ -102,7 +102,7 @@ List_Sequence<T>::List_Sequence() {
 
 
 template <typename T>
-List_Sequence<T>::List_Sequence(int size, T item) {
+List_Sequence<T>::List_Sequence(int size, const T& item) {
     Linked_list = new Doubly_Circular_Linked_list<T>();
     for (int i = 0; i < size; i++) {
         Linked_list->Append(item);
@@ -149,14 +149,14 @@ size_t List_Sequence<T>::Get_length() const {
 
 
 template <typename T>
-void List_Sequence<T>::Append_Internal(T item) const {
+void List_Sequence<T>::Append_Internal(const T& item) const {
     Linked_list->Append(item);
 }
 
 
 
 template <typename T>
-void List_Sequence<T>::Prepend_Internal(T item) const {
+void List_Sequence<T>::Prepend_Internal(const T& item) const {
     Linked_list->Prepend(item);
 }
 
@@ -177,14 +177,14 @@ void List_Sequence<T>::Pop_back_Internal() {
 
 
 template <typename T>
-void List_Sequence<T>::Set_Internal(T item, size_t index) {
+void List_Sequence<T>::Set_Internal(const T& item, size_t index) {
     Linked_list->Set(item, index);
 }
 
 
 
 template <typename T>
-void List_Sequence<T>::Insert_At_Internal(T item, size_t index) {
+void List_Sequence<T>::Insert_At_Internal(const T& item, size_t index) {
     Linked_list->Insert_At(item, index);
 }
 
@@ -215,7 +215,7 @@ T& List_Sequence<T>::operator[](const int index) const {
 // --------------------------------------------------------
 
 template <typename T>
-List_Sequence<T>* List_Sequence<T>::Append(T item) {
+List_Sequence<T>* List_Sequence<T>::Append(const T& item) {
     List_Sequence<T>* instance = Instance();
     instance->Append_Internal(item);
     return instance;
@@ -224,7 +224,7 @@ List_Sequence<T>* List_Sequence<T>::Append(T item) {
 
 
 template <typename T>
-List_Sequence<T>* List_Sequence<T>::Prepend(T item) {
+List_Sequence<T>* List_Sequence<T>::Prepend(const T& item) {
     List_Sequence<T>* instance = Instance();
     instance->Prepend_Internal(item);
     return instance;
@@ -251,7 +251,7 @@ List_Sequence<T>* List_Sequence<T>::Pop_back() {
 
 
 template <typename T>
-List_Sequence<T>* List_Sequence<T>::Insert_At(T item, size_t index) {
+List_Sequence<T>* List_Sequence<T>::Insert_At(const T& item, size_t index) {
     List_Sequence<T>* instance = Instance();
     instance->Insert_At_Internal(item, index);
     return instance;
@@ -260,7 +260,7 @@ List_Sequence<T>* List_Sequence<T>::Insert_At(T item, size_t index) {
 
 
 template <typename T>
-List_Sequence<T>* List_Sequence<T>::Set(T item, size_t index) {
+List_Sequence<T>* List_Sequence<T>::Set(const T& item, size_t index) {
     List_Sequence<T>* instance = Instance();
     instance->Set_Internal(item, index);
     return instance;
@@ -333,7 +333,7 @@ List_Sequence<T>* List_Sequence<T>::map(T(*function)(const T&)) {
 
 
 template <typename T>
-int List_Sequence<T>::find(T element) const {
+int List_Sequence<T>::find(const T& element) const {
     for (int i = 0; i < this->Get_length(); ++i) {
         if (element == this->Get(i)) {
             return i;
@@ -346,7 +346,7 @@ int List_Sequence<T>::find(T element) const {
 
 
 template <typename T>
-int List_Sequence<T>::count(T element) const {
+int List_Sequence<T>::count(const T& element) const {
 
     int count  = 0;
     for (int i = 0; i < this->Get_length(); ++i) {

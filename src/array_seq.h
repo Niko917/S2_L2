@@ -13,17 +13,17 @@ private:
 
     Dynamic_Array<T>* array = new Dynamic_Array<T>;
     
-    void Append_Internal(const T item);
+    void Append_Internal(const T& item);
 
-    void Prepend_Internal(const T item);
+    void Prepend_Internal(const T& item);
 
     void Pop_back_Internal();
 
     void Pop_front_Internal();
 
-    void Set_Internal(T item, size_t index);
+    void Set_Internal(const T& item, size_t index);
 
-    void Insert_At_Internal(T item, size_t index);
+    void Insert_At_Internal(const T& item, size_t index);
 
     void Resize_Internal(size_t New_size);
 
@@ -42,7 +42,7 @@ public:
 
     Array_sequence(const Dynamic_Array<T>& arr);
 
-    Array_sequence(int size, T item);
+    Array_sequence(int size, const T& item);
 
     ~Array_sequence();
 
@@ -72,17 +72,17 @@ public:
 
     // ---------------------------------------------------
 
-    Array_sequence<T>* Append(T item) override;
+    Array_sequence<T>* Append(const T& item) override;
 
-    Array_sequence<T>* Prepend(T item) override;
+    Array_sequence<T>* Prepend(const T& item) override;
 
     Array_sequence<T>* Pop_back() override;
 
     Array_sequence<T>* Pop_front() override;
 
-    Array_sequence<T>* Insert_At(T item, size_t index) override;
+    Array_sequence<T>* Insert_At(const T& item, size_t index) override;
 
-    Array_sequence<T>* Set(T item, size_t index) override;
+    Array_sequence<T>* Set(const T& item, size_t index) override;
  
     Array_sequence<T>* Get_subsequence(size_t start_index, size_t end_index) const override;
 
@@ -97,9 +97,9 @@ public:
 
     Array_sequence<T>* map(T(*function)(const T&)) override;
 
-    int find(T element) const override;
+    int find(const T& element) const override;
 
-    int count(T element) const override;
+    int count(const T& element) const override;
 
     // -----------------------------------------------------
 
@@ -121,7 +121,7 @@ Array_sequence<T>::Array_sequence() {
 }
 
 template <typename T>
-Array_sequence<T>::Array_sequence(int size, T item) : Array_sequence() {
+Array_sequence<T>::Array_sequence(int size, const T& item) : Array_sequence() {
     array = new Dynamic_Array<T>(size, item);
 }
 
@@ -162,7 +162,7 @@ Array_sequence<T>::~Array_sequence() {
 
 
 template <typename T>
-Array_sequence<T>* Array_sequence<T>::Append(T item) {
+Array_sequence<T>* Array_sequence<T>::Append(const T& item) {
     Array_sequence<T>* instance = Instance();
     instance->Append_Internal(item);
     return instance;
@@ -171,7 +171,7 @@ Array_sequence<T>* Array_sequence<T>::Append(T item) {
 
 
 template <typename T>
-Array_sequence<T>* Array_sequence<T>::Prepend(T item) {
+Array_sequence<T>* Array_sequence<T>::Prepend(const T& item) {
     Array_sequence<T>* instance = Instance();
     instance->Prepend_Internal(item);
     return instance;
@@ -198,7 +198,7 @@ Array_sequence<T>* Array_sequence<T>::Pop_front() {
 
 
 template <typename T>
-Array_sequence<T>* Array_sequence<T>::Insert_At(T item, size_t index) {
+Array_sequence<T>* Array_sequence<T>::Insert_At(const T& item, size_t index) {
     Array_sequence<T>* instance = Instance();
     instance->Insert_At_Internal(item, index);
     return instance;
@@ -207,7 +207,7 @@ Array_sequence<T>* Array_sequence<T>::Insert_At(T item, size_t index) {
 
 
 template <typename T>
-Array_sequence<T>* Array_sequence<T>::Set(T item, size_t index) {
+Array_sequence<T>* Array_sequence<T>::Set(const T& item, size_t index) {
     Array_sequence<T>* instance = Instance();
     instance->Set_Internal(item, index);
     return instance;
@@ -267,7 +267,7 @@ Array_sequence<T>* Array_sequence<T>::map(T(*function)(const T&)) {
 
 
 template <typename T>
-int Array_sequence<T>::find(T element) const {
+int Array_sequence<T>::find(const T& element) const {
     for (int i = 0; i < this->Get_length(); ++i) {
         if (element == this->Get(i)) {
             return i;
@@ -279,7 +279,7 @@ int Array_sequence<T>::find(T element) const {
 
 
 template <typename T>
-int Array_sequence<T>::count(T element) const {
+int Array_sequence<T>::count(const T& element) const {
     int count = 0;
     for (int i = 0; i < this->Get_length(); ++i) {
         if (element == this->Get(i)) {
@@ -311,14 +311,14 @@ size_t Array_sequence<T>::Get_length() const {
 
 
 template <typename T>
-void Array_sequence<T>::Append_Internal(T item) {
+void Array_sequence<T>::Append_Internal(const T& item) {
     array->Append(item);
 }
 
 
 
 template <typename T>
-void Array_sequence<T>::Prepend_Internal(T item) {
+void Array_sequence<T>::Prepend_Internal(const T& item) {
     array->Prepend(item);
 }
 
@@ -339,14 +339,14 @@ void Array_sequence<T>::Pop_front_Internal() {
 
 
 template <typename T>
-void Array_sequence<T>::Set_Internal(T item, size_t index) {
+void Array_sequence<T>::Set_Internal(const T& item, size_t index) {
     array->Set(item, index);
 }
 
 
 
 template <typename T>
-void Array_sequence<T>::Insert_At_Internal(T item, size_t index) {
+void Array_sequence<T>::Insert_At_Internal(const T& item, size_t index) {
     array->Insert_At(item, index);
 }
 

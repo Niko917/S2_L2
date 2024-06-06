@@ -30,11 +30,11 @@ public:
 
     Dynamic_Array(T* items, size_t count);
 
-    Dynamic_Array(size_t size, const T default_element);
+    Dynamic_Array(size_t size, const T& default_element);
 
     ~Dynamic_Array();
 
-    T& operator [] (const int index) const;
+    T& operator [] (const int& index) const;
 
     ////////////////////////////////////////////
     // METHODS
@@ -50,21 +50,21 @@ public:
 
     T Get_last() const;
 
-    void Set(T value, size_t index);
+    void Set(const T& value, size_t index);
 
     void Resize(size_t New_size);
 
     void reallocation();
 
-    void Append(T item);
+    void Append(const T& item);
 
-    void Prepend(T item);
+    void Prepend(const T& item);
 
     void Pop_back();
 
     void Pop_front();
 
-    void Insert_At(T item, size_t index);
+    void Insert_At(const T& item, size_t index);
 
     bool empty() const;
 
@@ -76,7 +76,7 @@ public:
 /// Constructors and Destructors
 
 template <typename T>
-Dynamic_Array<T>::Dynamic_Array(size_t size, const T default_element) {
+Dynamic_Array<T>::Dynamic_Array(size_t size, const T& default_element) {
     this->items = new T[size];
     this->size = size;
     this->capacity = size;
@@ -186,7 +186,7 @@ T Dynamic_Array<T>::Get_last() const {
 
 
 template <typename T>
-void Dynamic_Array<T>::Set(T value, size_t index) {
+void Dynamic_Array<T>::Set(const T& value, size_t index) {
     if (index >= size){
         throw ERRORS::Index_Out_of_range;
     }
@@ -225,7 +225,7 @@ void Dynamic_Array<T>::Resize(size_t New_size) {
 
 
 template <typename T>
-void Dynamic_Array<T>::Append(T item) {
+void Dynamic_Array<T>::Append(const T& item) {
     reallocation();
     this->items[this->size] = item;
     this->size++;
@@ -233,7 +233,7 @@ void Dynamic_Array<T>::Append(T item) {
 
 
 template <typename T>
-void Dynamic_Array<T>::Prepend(T item) {
+void Dynamic_Array<T>::Prepend(const T& item) {
     if (this->size >= this->capacity) {
 		this->capacity *= 2;
 		T* new_array = new T[this->capacity];
@@ -315,7 +315,7 @@ void Dynamic_Array<T>::reallocation() {
 
 
 template <typename T>
-void Dynamic_Array<T>::Insert_At(T item, size_t index) {
+void Dynamic_Array<T>::Insert_At(const T& item, size_t index) {
 
     if (index > this->size) throw ERRORS::Index_Out_of_range;
 
@@ -336,7 +336,7 @@ void Dynamic_Array<T>::Insert_At(T item, size_t index) {
 
 
 template <typename T>
-T& Dynamic_Array<T>::operator[](const int index) const {
+T& Dynamic_Array<T>::operator[](const int& index) const {
     if (index < 0 || index >= size) throw ERRORS::Index_Out_of_range;
     return this->items[index];
 }

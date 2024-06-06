@@ -32,27 +32,27 @@ class Sequence {
     // --------------------------------------------------------------------------------- 
     // OPERATIONS
         
-        virtual Sequence<T>* Append (T item) = 0;
+        virtual Sequence<T>* Append (const T& item) = 0;
 
-        virtual Sequence<T>* Prepend(T item) = 0;
+        virtual Sequence<T>* Prepend(const T& item) = 0;
 
         virtual Sequence<T>* Pop_back() = 0;
 
         virtual Sequence<T>* Pop_front() = 0;
 
-        virtual Sequence<T>* Insert_At(T item, size_t index) = 0;
+        virtual Sequence<T>* Insert_At(const T& item, size_t index) = 0;
 
         virtual Sequence<T>* Concat(Sequence<T>& other) = 0;
 
         virtual Sequence<T>* Resize(size_t New_size) = 0;
 
-        virtual Sequence<T>* Set(T item, size_t index) = 0;
+        virtual Sequence<T>* Set(const T& item, size_t index) = 0;
 
         virtual Sequence<T>* map(T(*function)(const T&)) = 0;
         
-        virtual int find(T element) const = 0;
+        virtual int find(const T& element) const = 0;
 
-        virtual int count(T element) const = 0;
+        virtual int count(const T& element) const = 0;
 
         virtual Sequence<T>* clear() = 0;
 
